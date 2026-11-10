@@ -72,7 +72,7 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
         <svg
           ref={svgRef}
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-          preserveAspectRatio="xMinYMin meet"
+          preserveAspectRatio="xMidYMid meet"
           className="w-full max-h-[70vh] cursor-grab touch-none active:cursor-grabbing"
           onClick={() => setSelectedId(null)}
         >
