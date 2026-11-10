@@ -1,6 +1,10 @@
+"use client";
+
+import { ContainedList, ContainedListItem } from "@carbon/react";
 import { CATEGORIES } from "../lib/categories";
 import { usd } from "../lib/format";
 import type { Category, FundingPoint } from "../lib/types";
+import Swatch from "./Swatch";
 
 export default function PointList({
   points,
@@ -14,48 +18,48 @@ export default function PointList({
   onHover: (id: string | null) => void;
 }) {
   return (
-    <div className="flex flex-col gap-5">
-      <p className="text-zinc-500">Select a point on the map or from the list below to compare it with its nearest counterpart.</p>
+    <div className="flex flex-col gap-8">
+      <p className="type-body-01 text-[var(--cds-text-secondary)]">
+        Select a point on the map or from the list below to compare it with its nearest counterpart.
+      </p>
       {(Object.keys(CATEGORIES) as Category[]).map((cat) => {
         const items = points.filter((p) => p.category === cat);
         if (items.length === 0) return null;
         const { label, color } = CATEGORIES[cat];
         return (
-          <section key={cat}>
-            <h2 className="flex items-center gap-2 text-sm font-semibold">
-              <span className="inline-block h-3 w-3 rounded-full" style={{ background: color }} />
-              {label} ({items.length})
-            </h2>
-            <ul className="mt-2 divide-y divide-zinc-200 rounded-lg border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-              {items.map((p) => (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    onClick={() => onSelect(p.id)}
-                    onMouseEnter={() => onHover(p.id)}
-                    onMouseLeave={() => onHover(null)}
-                    onFocus={() => onHover(p.id)}
-                    onBlur={() => onHover(null)}
-                    className="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span
-                        className="inline-block rounded-full"
-                        style={{
-                          background: color,
-                          width: hoveredId === p.id ? 16 : 10,
-                          height: hoveredId === p.id ? 16 : 10,
-                          filter: hoveredId === p.id ? "brightness(1.35) saturate(1.3)" : undefined,
-                        }}
-                      />
-                      {p.name}
-                    </span>
-                    <span className="shrink-0 text-zinc-500">{usd.format(p.funding)}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
+          <ContainedList
+            key={cat}
+            kind="on-page"
+            size="md"
+            label={
+              <span className="flex items-center gap-2">
+                <Swatch color={color} />
+                {label} ({items.length})
+              </span>
+            }
+          >
+            {items.map((p) => (
+              <ContainedListItem
+                key={p.id}
+                onClick={() => onSelect(p.id)}
+                // Forwarded to the <li>; keeps hover in sync with the map.
+                {...{
+                  onMouseEnter: () => onHover(p.id),
+                  onMouseLeave: () => onHover(null),
+                  onFocus: () => onHover(p.id),
+                  onBlur: () => onHover(null),
+                }}
+                className={hoveredId === p.id ? "bg-[var(--cds-layer-hover-01)]" : undefined}
+              >
+                <span className="flex w-full items-center justify-between gap-4">
+                  <span>{p.name}</span>
+                  <span className="type-mono shrink-0 text-[var(--cds-text-secondary)]">
+                    {usd.format(p.funding)}
+                  </span>
+                </span>
+              </ContainedListItem>
+            ))}
+          </ContainedList>
         );
       })}
     </div>

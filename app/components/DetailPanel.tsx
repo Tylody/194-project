@@ -1,3 +1,7 @@
+"use client";
+
+import { Button, Tag } from "@carbon/react";
+import { ArrowLeft } from "@carbon/icons-react";
 import type { FundingPoint } from "../lib/types";
 import PointList from "./PointList";
 import DetailCard from "./DetailCard";
@@ -27,15 +31,17 @@ export default function DetailPanel({ point, paired, points, onSelect, hoveredId
 
   return (
     <aside className="w-full md:flex-1">
-      <button type="button" onClick={onClear} className="mb-3 cursor-pointer text-sm text-zinc-500 hover:underline">
-        ← All points
-      </button>
-      {paired && (
-        <p className="mb-3 text-sm text-zinc-500">
-          Nearest {point.category === "datacenter" ? "school/library" : "data center"}:{" "}
-          {Math.round(paired.km * 0.621371)} mi away
-        </p>
-      )}
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <Button kind="ghost" size="sm" renderIcon={ArrowLeft} iconDescription="Back" onClick={onClear}>
+          All points
+        </Button>
+        {paired && (
+          <Tag type="gray" size="md">
+            Nearest {point.category === "datacenter" ? "school/library" : "data center"}:{" "}
+            {Math.round(paired.km * 0.621371)} mi away
+          </Tag>
+        )}
+      </div>
       <div className="flex flex-col gap-4">
         <DetailCard point={left} />
         {right && <DetailCard point={right} />}

@@ -48,10 +48,9 @@ export default function MapPoint({ point, x, y, selected, highlighted, hovered, 
         cy={y}
         r={(hovered ? 12 : emphasized ? 9 : 6) / scale}
         fill={color}
-        stroke={emphasized ? "currentColor" : "white"}
+        stroke={emphasized ? "var(--cds-text-primary)" : "var(--cds-background)"}
         strokeWidth={2 / scale}
-        className="group-hover:stroke-black group-focus-visible:stroke-black dark:group-hover:stroke-white"
-        style={{ filter: hovered ? "brightness(1.35) saturate(1.3)" : undefined }}
+        className="group-focus-visible:stroke-[var(--cds-focus)]"
         pointerEvents="none"
       />
     </g>

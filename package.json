@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@carbon/icons-react": "^11.92.0",
+    "@carbon/react": "^1.120.0",
     "d3-geo": "^3.1.2",
     "d3-selection": "^3.0.1",
     "d3-transition": "^3.0.2",

@@ -1,26 +1,25 @@
-@import "tailwindcss";
+/* Carbon first so its reset + component styles form the base; Tailwind preflight is
+   intentionally skipped so it doesn't fight Carbon's reset. */
+@import "@carbon/styles/css/styles.css";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Carbon type scale (productive set) as small helpers. Values from @carbon/type. */
+@layer components {
+  .type-label-01 { font-size: 0.75rem; line-height: 1rem; letter-spacing: 0.32px; }
+  .type-helper-01 { font-size: 0.75rem; line-height: 1rem; letter-spacing: 0.32px; color: var(--cds-text-helper); }
+  .type-body-01 { font-size: 0.875rem; line-height: 1.25rem; letter-spacing: 0.16px; }
+  .type-heading-compact-01 { font-size: 0.875rem; line-height: 1.125rem; font-weight: 600; letter-spacing: 0.16px; }
+  .type-heading-02 { font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
+  .type-heading-03 { font-size: 1.25rem; line-height: 1.75rem; }
+  .type-heading-04 { font-size: 1.75rem; line-height: 2.25rem; }
+  .type-heading-05 { font-size: 2rem; line-height: 2.5rem; font-weight: 300; }
+  .type-heading-06 { font-size: 2.625rem; line-height: 3.125rem; font-weight: 300; }
+  .type-mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cds-background);
+  color: var(--cds-text-primary);
 }

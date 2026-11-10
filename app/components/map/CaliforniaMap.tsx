@@ -12,6 +12,8 @@ import { nearestCounterpart } from "../../lib/geo";
 import DetailPanel from "../DetailPanel";
 import Legend from "../Legend";
 import MapPoint from "./MapPoint";
+import { IconButton, Tile } from "@carbon/react";
+import { ZoomIn, ZoomOut, ZoomReset } from "@carbon/icons-react";
 
 const WIDTH = 600;
 const HEIGHT = 700;
@@ -64,12 +66,18 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
   );
 
   return (
-    <div className="flex flex-col items-start gap-6 md:flex-row">
-      <div className="relative w-full md:w-1/2 md:shrink-0">
-        <div className="absolute right-2 top-2 flex flex-col gap-1 text-lg">
-          <ZoomButton label="+" aria="Zoom in" onClick={() => zoomBy(1.6)} />
-          <ZoomButton label="−" aria="Zoom out" onClick={() => zoomBy(1 / 1.6)} />
-          <ZoomButton label="⟲" aria="Reset zoom" onClick={resetZoom} />
+    <div className="flex flex-col items-start gap-8 md:flex-row">
+      <Tile className="relative w-full !p-4 md:w-1/2 md:shrink-0">
+        <div className="absolute right-4 top-4 z-10 flex flex-col border border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)]">
+          <IconButton kind="ghost" size="md" label="Zoom in" align="left" onClick={() => zoomBy(1.6)}>
+            <ZoomIn />
+          </IconButton>
+          <IconButton kind="ghost" size="md" label="Zoom out" align="left" onClick={() => zoomBy(1 / 1.6)}>
+            <ZoomOut />
+          </IconButton>
+          <IconButton kind="ghost" size="md" label="Reset zoom" align="left" onClick={resetZoom}>
+            <ZoomReset />
+          </IconButton>
         </div>
         <svg
           ref={svgRef}
@@ -79,17 +87,17 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
           onClick={() => setSelectedId(null)}
         >
           <g transform={`translate(${t.x} ${t.y}) scale(${t.k})`}>
-          <path d={outline} className="fill-zinc-100 stroke-zinc-400 dark:fill-zinc-800" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+          <path d={outline} fill="var(--cds-layer-accent-01)" stroke="var(--cds-border-strong-01)" strokeWidth={1} vectorEffect="non-scaling-stroke" />
           {selected && paired && (
             <line
               x1={project(selected)[0]}
               y1={project(selected)[1]}
               x2={project(paired.point)[0]}
               y2={project(paired.point)[1]}
-              className="stroke-zinc-500"
-              strokeWidth={2}
+              stroke="var(--cds-icon-secondary)"
+              strokeWidth={1.5}
               vectorEffect="non-scaling-stroke"
-              strokeDasharray="6 4"
+              strokeDasharray="4 4"
               pointerEvents="none"
             />
           )}
@@ -102,36 +110,25 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
           </g>
           {hovered && <Tooltip text={hovered.name} x={project(hovered)[0] * t.k + t.x} y={project(hovered)[1] * t.k + t.y} />}
         </svg>
-        <Legend />
-      </div>
+        <div className="mt-4 border-t border-[var(--cds-border-subtle-01)] pt-4">
+          <Legend />
+        </div>
+      </Tile>
       <DetailPanel point={selected} paired={paired} points={points} onSelect={setSelectedId} hoveredId={hoveredId} onHover={setHoveredId} onClear={() => setSelectedId(null)} />
     </div>
   );
 }
 
-function ZoomButton({ label, aria, onClick }: { label: string; aria: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      aria-label={aria}
-      onClick={onClick}
-      className="h-8 w-8 cursor-pointer rounded border border-zinc-300 bg-white hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
-    >
-      {label}
-    </button>
-  );
-}
-
 /** Drawn outside the zoom group, so it keeps a constant size at any zoom level. */
 function Tooltip({ text, x, y }: { text: string; x: number; y: number }) {
-  const w = text.length * 6.6 + 16;
-  const h = 22;
+  const w = text.length * 6.6 + 32;
+  const h = 28;
   const cx = Math.min(Math.max(x, w / 2 + 2), WIDTH - w / 2 - 2);
   const top = Math.max(y - 12 - 8 - h, 2);
   return (
     <g pointerEvents="none">
-      <rect x={cx - w / 2} y={top} width={w} height={h} rx={4} className="fill-zinc-900 dark:fill-zinc-100" />
-      <text x={cx} y={top + h / 2} textAnchor="middle" dominantBaseline="central" fontSize={12} className="fill-white dark:fill-zinc-900">
+      <rect x={cx - w / 2} y={top} width={w} height={h} rx={2} fill="var(--cds-background-inverse)" />
+      <text x={cx} y={top + h / 2} textAnchor="middle" dominantBaseline="central" fontSize={12} fill="var(--cds-text-inverse)" letterSpacing={0.16}>
         {text}
       </text>
     </g>
