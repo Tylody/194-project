@@ -1,8 +1,11 @@
+import { memo } from "react";
 import { CATEGORIES } from "../../lib/categories";
 import type { FundingPoint } from "../../lib/types";
 
 /** Radius (screen px) of the invisible click/hover target around each dot. */
-const HIT_RADIUS = 14;
+const HIT_RADIUS = 8;
+/** Districts are dense (900+), so they draw smaller than the sparse categories. */
+const BASE_RADIUS = { district: 3.5, library: 6, datacenter: 6 } as const;
 
 interface Props {
   point: FundingPoint;
@@ -17,7 +20,7 @@ interface Props {
   onSelect: (id: string) => void;
 }
 
-export default function MapPoint({ point, x, y, selected, highlighted, hovered, scale = 1, onSelect, onHover }: Props) {
+function MapPoint({ point, x, y, selected, highlighted, hovered, scale = 1, onSelect, onHover }: Props) {
   const { label, color } = CATEGORIES[point.category];
   const emphasized = selected || highlighted;
   return (
@@ -46,13 +49,15 @@ export default function MapPoint({ point, x, y, selected, highlighted, hovered, 
       <circle
         cx={x}
         cy={y}
-        r={(hovered ? 12 : emphasized ? 9 : 6) / scale}
+        r={(hovered ? 10 : emphasized ? 8 : BASE_RADIUS[point.category]) / scale}
         fill={color}
         stroke={emphasized ? "var(--cds-text-primary)" : "var(--cds-background)"}
-        strokeWidth={2 / scale}
+        strokeWidth={(emphasized || hovered ? 2 : 1) / scale}
         className="group-focus-visible:stroke-[var(--cds-focus)]"
         pointerEvents="none"
       />
     </g>
   );
 }
+
+export default memo(MapPoint);

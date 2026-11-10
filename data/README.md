@@ -87,3 +87,15 @@ arithmetic or integer cents rather than binary floating point.
 The `data/` directory is a repository dataset; it is not exposed as a public
 Next.js asset. Application integration can load and validate the CSV server-side
 when needed.
+
+## District locations
+
+[`district_locations.csv`](./district_locations.csv) gives one map coordinate per
+row of the funding file, keyed by `district_cds_code`. Coordinates are the
+district office `Latitude`/`Longitude` from the same
+[CDE public school directory](https://www.cde.ca.gov/ds/si/ds/pubschls.asp)
+(`pubschls.txt`, downloaded November 10, 2026), matched on the full 14-character
+CDS code. 921 rows match directly (`location_basis = district office`). The five
+combined reporting units use the mean of their two member districts' office
+coordinates (`mean of member district offices`). A point marks the office, not
+the district boundary or the schools it serves.

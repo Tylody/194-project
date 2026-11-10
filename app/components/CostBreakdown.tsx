@@ -3,6 +3,8 @@ import type { CostGroup } from "../lib/types";
 
 export default function CostBreakdown({ group, color }: { group: CostGroup; color: string }) {
   const total = group.items.reduce((s, i) => s + i.amount, 0);
+  // Bars are shares of the positive items; negative adjustments get an empty bar.
+  const scale = group.items.reduce((s, i) => s + Math.max(i.amount, 0), 0) || 1;
   return (
     <section className="mt-6 border-t border-[var(--cds-border-subtle-01)] pt-4">
       <h3 className="type-heading-compact-01 flex justify-between">
@@ -21,10 +23,10 @@ export default function CostBreakdown({ group, color }: { group: CostGroup; colo
               role="meter"
               aria-label={item.label}
               aria-valuemin={0}
-              aria-valuemax={total}
-              aria-valuenow={item.amount}
+              aria-valuemax={scale}
+              aria-valuenow={Math.max(item.amount, 0)}
             >
-              <div className="h-full" style={{ width: `${(item.amount / total) * 100}%`, background: color }} />
+              <div className="h-full" style={{ width: `${(Math.max(item.amount, 0) / scale) * 100}%`, background: color }} />
             </div>
           </li>
         ))}

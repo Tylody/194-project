@@ -16,9 +16,10 @@ export default function DetailCard({ point }: { point: FundingPoint }) {
         {label}
       </p>
       <h2 className="type-heading-03 mt-2">{point.name}</h2>
+      {point.subtitle && <p className="type-body-01 text-[var(--cds-text-secondary)]">{point.subtitle}</p>}
       <p className="type-heading-06 mt-4">{usd.format(point.funding)}</p>
       <p className="type-helper-01 mt-1">
-        {point.year} · Source: {point.source}
+        {point.period} · Source: {point.source}
       </p>
       {point.breakdown?.map((g) => (
         <CostBreakdown key={g.title} group={g} color={color} />
