@@ -7,14 +7,16 @@ interface Props {
   paired: { point: FundingPoint; km: number } | null;
   points: FundingPoint[];
   onSelect: (id: string) => void;
+  hoveredId: string | null;
+  onHover: (id: string | null) => void;
   onClear: () => void;
 }
 
-export default function DetailPanel({ point, paired, points, onSelect, onClear }: Props) {
+export default function DetailPanel({ point, paired, points, onSelect, hoveredId, onHover, onClear }: Props) {
   if (!point) {
     return (
       <aside className="w-full md:flex-1">
-        <PointList points={points} onSelect={onSelect} />
+        <PointList points={points} onSelect={onSelect} hoveredId={hoveredId} onHover={onHover} />
       </aside>
     );
   }

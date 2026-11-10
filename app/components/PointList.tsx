@@ -5,9 +5,13 @@ import type { Category, FundingPoint } from "../lib/types";
 export default function PointList({
   points,
   onSelect,
+  hoveredId,
+  onHover,
 }: {
   points: FundingPoint[];
   onSelect: (id: string) => void;
+  hoveredId: string | null;
+  onHover: (id: string | null) => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -28,9 +32,24 @@ export default function PointList({
                   <button
                     type="button"
                     onClick={() => onSelect(p.id)}
+                    onMouseEnter={() => onHover(p.id)}
+                    onMouseLeave={() => onHover(null)}
+                    onFocus={() => onHover(p.id)}
+                    onBlur={() => onHover(null)}
                     className="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >
-                    <span>{p.name}</span>
+                    <span className="flex items-center gap-2">
+                      <span
+                        className="inline-block rounded-full"
+                        style={{
+                          background: color,
+                          width: hoveredId === p.id ? 16 : 10,
+                          height: hoveredId === p.id ? 16 : 10,
+                          filter: hoveredId === p.id ? "brightness(1.35) saturate(1.3)" : undefined,
+                        }}
+                      />
+                      {p.name}
+                    </span>
                     <span className="shrink-0 text-zinc-500">{usd.format(p.funding)}</span>
                   </button>
                 </li>

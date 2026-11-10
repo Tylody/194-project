@@ -18,6 +18,7 @@ const HEIGHT = 700;
 
 export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   const svgRef = useRef<SVGSVGElement>(null);
   const zoomRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
@@ -55,6 +56,7 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
     };
   }, []);
 
+  const hovered = points.find((p) => p.id === hoveredId) ?? null;
   const selected = points.find((p) => p.id === selectedId) ?? null;
   const paired = useMemo(
     () => (selected ? nearestCounterpart(selected, points) : null),
@@ -94,14 +96,15 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
           {points.map((p) => {
             const [x, y] = project(p);
             return (
-              <MapPoint key={p.id} point={p} x={x} y={y} selected={p.id === selectedId} highlighted={p.id === paired?.point.id} scale={t.k} onSelect={setSelectedId} />
+              <MapPoint key={p.id} point={p} x={x} y={y} selected={p.id === selectedId} highlighted={p.id === paired?.point.id} scale={t.k} hovered={p.id === hoveredId} onHover={setHoveredId} onSelect={setSelectedId} />
             );
           })}
           </g>
+          {hovered && <Tooltip text={hovered.name} x={project(hovered)[0] * t.k + t.x} y={project(hovered)[1] * t.k + t.y} />}
         </svg>
         <Legend />
       </div>
-      <DetailPanel point={selected} paired={paired} points={points} onSelect={setSelectedId} onClear={() => setSelectedId(null)} />
+      <DetailPanel point={selected} paired={paired} points={points} onSelect={setSelectedId} hoveredId={hoveredId} onHover={setHoveredId} onClear={() => setSelectedId(null)} />
     </div>
   );
 }
@@ -116,5 +119,21 @@ function ZoomButton({ label, aria, onClick }: { label: string; aria: string; onC
     >
       {label}
     </button>
+  );
+}
+
+/** Drawn outside the zoom group, so it keeps a constant size at any zoom level. */
+function Tooltip({ text, x, y }: { text: string; x: number; y: number }) {
+  const w = text.length * 6.6 + 16;
+  const h = 22;
+  const cx = Math.min(Math.max(x, w / 2 + 2), WIDTH - w / 2 - 2);
+  const top = Math.max(y - 12 - 8 - h, 2);
+  return (
+    <g pointerEvents="none">
+      <rect x={cx - w / 2} y={top} width={w} height={h} rx={4} className="fill-zinc-900 dark:fill-zinc-100" />
+      <text x={cx} y={top + h / 2} textAnchor="middle" dominantBaseline="central" fontSize={12} className="fill-white dark:fill-zinc-900">
+        {text}
+      </text>
+    </g>
   );
 }

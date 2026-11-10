@@ -1,30 +1,31 @@
 import { CATEGORIES } from "../../lib/categories";
 import type { FundingPoint } from "../../lib/types";
 
+/** Radius (screen px) of the invisible click/hover target around each dot. */
+const HIT_RADIUS = 14;
+
 interface Props {
   point: FundingPoint;
   x: number;
   y: number;
   selected: boolean;
   highlighted?: boolean;
+  hovered?: boolean;
+  onHover: (id: string | null) => void;
   /** Current zoom factor; dots are counter-scaled to stay a constant screen size. */
   scale?: number;
   onSelect: (id: string) => void;
 }
 
-export default function MapPoint({ point, x, y, selected, highlighted, scale = 1, onSelect }: Props) {
+export default function MapPoint({ point, x, y, selected, highlighted, hovered, scale = 1, onSelect, onHover }: Props) {
+  const { label, color } = CATEGORIES[point.category];
+  const emphasized = selected || highlighted;
   return (
-    <circle
-      cx={x}
-      cy={y}
-      r={(selected || highlighted ? 9 : 6) / scale}
-      fill={CATEGORIES[point.category].color}
-      stroke={selected || highlighted ? "currentColor" : "white"}
-      strokeWidth={2 / scale}
+    <g
       tabIndex={0}
       role="button"
-      aria-label={`${CATEGORIES[point.category].label}: ${point.name}`}
-      className="cursor-pointer outline-none hover:stroke-black focus-visible:stroke-black dark:hover:stroke-white"
+      aria-label={`${label}: ${point.name}`}
+      className="group cursor-pointer outline-none"
       onClick={(e) => {
         e.stopPropagation();
         onSelect(point.id);
@@ -35,6 +36,24 @@ export default function MapPoint({ point, x, y, selected, highlighted, scale = 1
           onSelect(point.id);
         }
       }}
-    />
+      onMouseEnter={() => onHover(point.id)}
+      onMouseLeave={() => onHover(null)}
+      onFocus={() => onHover(point.id)}
+      onBlur={() => onHover(null)}
+    >
+      {/* Invisible, fixed-size hit target so hover doesn't depend on the dot's visual size. */}
+      <circle cx={x} cy={y} r={HIT_RADIUS / scale} fill="transparent" />
+      <circle
+        cx={x}
+        cy={y}
+        r={(hovered ? 12 : emphasized ? 9 : 6) / scale}
+        fill={color}
+        stroke={emphasized ? "currentColor" : "white"}
+        strokeWidth={2 / scale}
+        className="group-hover:stroke-black group-focus-visible:stroke-black dark:group-hover:stroke-white"
+        style={{ filter: hovered ? "brightness(1.35) saturate(1.3)" : undefined }}
+        pointerEvents="none"
+      />
+    </g>
   );
 }
