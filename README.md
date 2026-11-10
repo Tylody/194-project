@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Dataset
+
+The prepared [California district funding dataset](./data/README.md) contains
+2025–26 budgeted revenue by district, with funding categories, source metadata,
+and coverage notes.
+
 ## Getting Started
 
 First, run the development server:
