@@ -1,16 +1,20 @@
 import type { FundingPoint } from "../lib/types";
+import PointList from "./PointList";
 import DetailCard from "./DetailCard";
 
 interface Props {
   point: FundingPoint | null;
   paired: { point: FundingPoint; km: number } | null;
+  points: FundingPoint[];
+  onSelect: (id: string) => void;
+  onClear: () => void;
 }
 
-export default function DetailPanel({ point, paired }: Props) {
+export default function DetailPanel({ point, paired, points, onSelect, onClear }: Props) {
   if (!point) {
     return (
-      <aside className="w-full rounded-lg border border-zinc-200 p-4 text-zinc-500 dark:border-zinc-800">
-        Select a point on the map to see its funding and compare it with the nearest counterpart.
+      <aside className="w-full md:flex-1">
+        <PointList points={points} onSelect={onSelect} />
       </aside>
     );
   }
@@ -21,6 +25,9 @@ export default function DetailPanel({ point, paired }: Props) {
 
   return (
     <aside className="w-full md:flex-1">
+      <button type="button" onClick={onClear} className="mb-3 cursor-pointer text-sm text-zinc-500 hover:underline">
+        ← All points
+      </button>
       {paired && (
         <p className="mb-3 text-sm text-zinc-500">
           Nearest {point.category === "datacenter" ? "school/library" : "data center"}:{" "}

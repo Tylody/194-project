@@ -24,7 +24,7 @@ export default function MapPoint({ point, x, y, selected, highlighted, scale = 1
       tabIndex={0}
       role="button"
       aria-label={`${CATEGORIES[point.category].label}: ${point.name}`}
-      className="cursor-pointer outline-none focus-visible:stroke-black"
+      className="cursor-pointer outline-none hover:stroke-black focus-visible:stroke-black dark:hover:stroke-white"
       onClick={(e) => {
         e.stopPropagation();
         onSelect(point.id);

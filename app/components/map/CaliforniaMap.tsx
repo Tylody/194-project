@@ -101,7 +101,7 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
         </svg>
         <Legend />
       </div>
-      <DetailPanel point={selected} paired={paired} />
+      <DetailPanel point={selected} paired={paired} points={points} onSelect={setSelectedId} onClear={() => setSelectedId(null)} />
     </div>
   );
 }
@@ -112,7 +112,7 @@ function ZoomButton({ label, aria, onClick }: { label: string; aria: string; onC
       type="button"
       aria-label={aria}
       onClick={onClick}
-      className="h-8 w-8 rounded border border-zinc-300 bg-white hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+      className="h-8 w-8 cursor-pointer rounded border border-zinc-300 bg-white hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:bg-zinc-800"
     >
       {label}
     </button>
