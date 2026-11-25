@@ -34,6 +34,7 @@ export default function PointList({
       items: sorted.filter((p) => p.category === cat),
     }));
   }, [points, query]);
+  const total = byCategory.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <div className="flex flex-col gap-8">
@@ -52,10 +53,14 @@ export default function PointList({
             setShown({});
           }}
         />
+        {/* Announces result counts as the user types (WCAG 4.1.3). */}
+        <p role="status" className="cds--visually-hidden">
+          {query.trim() ? `${total.toLocaleString()} ${total === 1 ? "location" : "locations"} found` : ""}
+        </p>
       </div>
       {byCategory.map(({ cat, items }) => {
         if (items.length === 0) return null;
-        const { label, color } = CATEGORIES[cat];
+        const { label, color, shape } = CATEGORIES[cat];
         const limit = shown[cat] ?? PAGE;
         return (
           <div key={cat}>
@@ -64,7 +69,7 @@ export default function PointList({
               size="md"
               label={
                 <span className="flex items-center gap-2">
-                  <Swatch color={color} />
+                  <Swatch color={color} shape={shape} />
                   {label} ({items.length.toLocaleString()}){items.length > 1 && " · highest funding first"}
                 </span>
               }
@@ -75,6 +80,7 @@ export default function PointList({
                   onClick={() => onSelect(p.id)}
                   // Forwarded to the <li>; keeps hover in sync with the map.
                   {...{
+                    "data-point-id": p.id,
                     onMouseEnter: () => onHover(p.id),
                     onMouseLeave: () => onHover(null),
                     onFocus: () => onHover(p.id),
@@ -90,6 +96,7 @@ export default function PointList({
                       )}
                     </span>
                     <span className="type-mono shrink-0 text-[var(--cds-text-secondary)]">
+                      <span className="cds--visually-hidden">, </span>
                       {usd.format(p.funding)}
                     </span>
                   </span>

@@ -8,7 +8,10 @@ export default function CostBreakdown({ group, color }: { group: CostGroup; colo
   return (
     <section className="mt-6 border-t border-[var(--cds-border-subtle-01)] pt-4">
       <h3 className="type-heading-compact-01 flex justify-between">
-        <span>{group.title}</span>
+        <span>
+          {group.title}
+          <span className="cds--visually-hidden">, total </span>
+        </span>
         <span className="type-mono">{usd.format(total)}</span>
       </h3>
       <ul className="mt-3 flex flex-col gap-3">
@@ -18,14 +21,8 @@ export default function CostBreakdown({ group, color }: { group: CostGroup; colo
               <span>{item.label}</span>
               <span className="type-mono text-[var(--cds-text-secondary)]">{usd.format(item.amount)}</span>
             </div>
-            <div
-              className="mt-1 h-2 bg-[var(--cds-layer-accent-01)]"
-              role="meter"
-              aria-label={item.label}
-              aria-valuemin={0}
-              aria-valuemax={scale}
-              aria-valuenow={Math.max(item.amount, 0)}
-            >
+            {/* Decorative: the exact amount is already in the text above. */}
+            <div aria-hidden="true" className="mt-1 h-2 bg-[var(--cds-layer-accent-01)]">
               <div className="h-full" style={{ width: `${(Math.max(item.amount, 0) / scale) * 100}%`, background: color }} />
             </div>
           </li>
