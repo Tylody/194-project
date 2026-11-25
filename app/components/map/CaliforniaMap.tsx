@@ -11,12 +11,17 @@ import type { FundingPoint } from "../../lib/types";
 import { nearestCounterpart } from "../../lib/geo";
 import DetailPanel from "../DetailPanel";
 import Legend from "../Legend";
+import { CATEGORIES } from "../../lib/categories";
 import MapPoint from "./MapPoint";
 import { IconButton, Tile } from "@carbon/react";
 import { ZoomIn, ZoomOut, ZoomReset } from "@carbon/icons-react";
 
 const WIDTH = 600;
 const HEIGHT = 700;
+
+/** Skip zoom animations for users who ask for reduced motion (WCAG 2.3.3). */
+const motionMs = (ms: number) =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : ms;
 
 export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -42,11 +47,11 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
 
   const zoomBy = (factor: number) => {
     if (svgRef.current && zoomRef.current)
-      select(svgRef.current).transition().duration(200).call(zoomRef.current.scaleBy, factor);
+      select(svgRef.current).transition().duration(motionMs(200)).call(zoomRef.current.scaleBy, factor);
   };
   const resetZoom = () => {
     if (svgRef.current && zoomRef.current)
-      select(svgRef.current).transition().duration(300).call(zoomRef.current.transform, zoomIdentity);
+      select(svgRef.current).transition().duration(motionMs(300)).call(zoomRef.current.transform, zoomIdentity);
   };
 
   const { outline, project } = useMemo(() => {
@@ -67,7 +72,7 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
 
   return (
     <div className="flex flex-col items-start gap-8 md:flex-row">
-      <Tile className="relative w-full !p-4 md:w-1/2 md:shrink-0">
+      <Tile role="region" aria-label="Map" className="relative w-full !p-4 md:w-1/2 md:shrink-0">
         <div className="absolute right-4 top-4 z-10 flex flex-col border border-[var(--cds-border-subtle-01)] bg-[var(--cds-layer-01)]">
           <IconButton kind="ghost" size="md" label="Zoom in" align="left" onClick={() => zoomBy(1.6)}>
             <ZoomIn />
@@ -81,11 +86,19 @@ export default function CaliforniaMap({ points }: { points: FundingPoint[] }) {
         </div>
         <svg
           ref={svgRef}
+          role="img"
+          aria-labelledby="map-title map-desc"
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           preserveAspectRatio="xMidYMid meet"
           className="w-full max-h-[70vh] cursor-grab touch-none active:cursor-grabbing"
           onClick={() => setSelectedId(null)}
         >
+          <title id="map-title">Map of California funding locations</title>
+          <desc id="map-desc">
+            {`${points.length.toLocaleString()} locations plotted: ${Object.values(CATEGORIES)
+              .map((c) => c.label)
+              .join(", ")}. The same locations can be searched and selected from the lists on this page.`}
+          </desc>
           <g transform={`translate(${t.x} ${t.y}) scale(${t.k})`}>
           <path d={outline} fill="var(--cds-layer-accent-01)" stroke="var(--cds-border-strong-01)" strokeWidth={1} vectorEffect="non-scaling-stroke" />
           {selected && paired && (

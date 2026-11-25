@@ -23,3 +23,17 @@ body {
   background: var(--cds-background);
   color: var(--cds-text-primary);
 }
+
+/* Category colors (Carbon palette), chosen per theme for >= 3:1 contrast against the
+   map fill (layer-accent-01) and the marker outline (background). */
+:root,
+.cds--white {
+  --cat-district: #0072c3;   /* cyan 60 */
+  --cat-library: #005d5d;    /* teal 70 */
+  --cat-datacenter: #9f1853; /* magenta 70 */
+}
+.cds--g100 {
+  --cat-district: #33b1ff;   /* cyan 40 */
+  --cat-library: #08bdba;    /* teal 40 */
+  --cat-datacenter: #ff7eb6; /* magenta 40 */
+}
